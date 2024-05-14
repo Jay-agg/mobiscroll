@@ -1,4 +1,5 @@
 import { Outlet, RouterProvider, createBrowserRouter } from "react-router-dom";
+import Month from "./Month";
 
 const Body = () => {
   const appRouter = createBrowserRouter([
@@ -9,11 +10,11 @@ const Body = () => {
   ]);
 
   return (
-    <div>
+    <>
       <RouterProvider router={appRouter}>
         <Outlet />
       </RouterProvider>
-    </div>
+    </>
   );
 };
 
