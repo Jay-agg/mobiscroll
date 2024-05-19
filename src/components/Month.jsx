@@ -55,7 +55,18 @@ const Month = () => {
     const savedResources = localStorage.getItem("resources");
     return savedResources
       ? JSON.parse(savedResources)
-      : ["Resource A", "Resource B", "Resource C", "Resource D", "Resource E"];
+      : [
+          "Resource A",
+          "Resource B",
+          "Resource C",
+          "Resource D",
+          "Resource E",
+          "Resource F",
+          "Resource G",
+          "Resource H",
+          "Resource I",
+          "Resource J",
+        ];
   });
 
   const [newResource, setNewResource] = useState("");
@@ -257,7 +268,7 @@ const Month = () => {
 
   return (
     <div className="w-screen" onMouseUp={handleMouseUp}>
-      <div className="bg-gray-200 w-full text-blue-700 flex justify-between text-xl p-2 absolute left-0 top-0 z-20">
+      <div className="bg-gray-200 w-full text-blue-700 flex justify-between text-2xl p-2 absolute left-0 top-0 z-20">
         <div>
           {monthNames[currentMonth]} {currentYear}
         </div>
@@ -270,7 +281,7 @@ const Month = () => {
       </div>
       <form
         onSubmit={handleAddResource}
-        className="absolute left-0 top-12 z-20 flex p-2 bg-gray-200 w-full"
+        className="absolute left-0 top-10 z-20 flex p-2 bg-gray-200 w-full"
       >
         <input
           type="text"
