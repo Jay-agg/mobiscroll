@@ -51,6 +51,15 @@ const Month = () => {
   const [isDraggingEvent, setIsDraggingEvent] = useState(false);
   const dragRef = useRef(null);
 
+  const [resources, setResources] = useState(() => {
+    const savedResources = localStorage.getItem("resources");
+    return savedResources
+      ? JSON.parse(savedResources)
+      : ["Resource A", "Resource B", "Resource C", "Resource D", "Resource E"];
+  });
+
+  const [newResource, setNewResource] = useState("");
+
   useEffect(() => {
     localStorage.setItem("currentMonth", currentMonth);
     localStorage.setItem("currentYear", currentYear);
@@ -59,6 +68,10 @@ const Month = () => {
   useEffect(() => {
     localStorage.setItem("events", JSON.stringify(events));
   }, [events]);
+
+  useEffect(() => {
+    localStorage.setItem("resources", JSON.stringify(resources));
+  }, [resources]);
 
   const goToNextMonth = () => {
     setCurrentMonth((prevMonth) => (prevMonth + 1) % 12);
@@ -73,20 +86,6 @@ const Month = () => {
       setCurrentYear((prevYear) => prevYear - 1);
     }
   };
-
-  const resources = [
-    "Resource B",
-    "Resource C",
-    "Resource D",
-    "Resource E",
-    "Resource F",
-    "Resource G",
-    "Resource H",
-    "Resource I",
-    "Resource J",
-    "Resource K",
-    "Resource L",
-  ];
 
   const daysArray = Array.from(
     { length: daysInMonth(currentMonth, currentYear) },
@@ -222,10 +221,12 @@ const Month = () => {
 
   const handleKeyDown = (event) => {
     if (event.key === "Delete" && selectedEvent) {
-      setEvents((prevEvents) =>
-        prevEvents.filter((event) => event !== selectedEvent)
-      );
-      setSelectedEvent(null);
+      if (window.confirm("Are you sure you want to delete this event?")) {
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event !== selectedEvent)
+        );
+        setSelectedEvent(null);
+      }
     }
   };
 
@@ -237,6 +238,14 @@ const Month = () => {
       hour: "2-digit",
       minute: "2-digit",
     })}`;
+  };
+
+  const handleAddResource = (e) => {
+    e.preventDefault();
+    if (newResource.trim() !== "") {
+      setResources((prevResources) => [...prevResources, newResource.trim()]);
+      setNewResource("");
+    }
   };
 
   useEffect(() => {
@@ -259,19 +268,45 @@ const Month = () => {
           <button onClick={goToNextMonth}>Next</button>
         </div>
       </div>
-      <div className="overflow-x-auto w-full left-0 absolute mt-2">
+      <form
+        onSubmit={handleAddResource}
+        className="absolute left-0 top-12 z-20 flex p-2 bg-gray-200 w-full"
+      >
+        <input
+          type="text"
+          value={newResource}
+          onChange={(e) => setNewResource(e.target.value)}
+          placeholder="Add new resource"
+          className="p-1 border border-gray-400 rounded-l-xl "
+        />
+        <button
+          type="submit"
+          className=" p-2 bg-blue-500 text-white rounded-r-xl"
+        >
+          +
+        </button>
+      </form>
+      <div className="overflow-x-auto w-full left-0 absolute mt-20">
         <table className="table-fixed border border-black w-full">
           <thead className="sticky top-0 z-10 ">
             <tr>
               <th className="w-32 p-2 border  font-normal"></th>
-              {daysArray.map((date) => (
-                <th
-                  key={date}
-                  className="p-2 border text-center w-32 font-normal"
-                >
-                  {dayNames[date.getDay()]} {date.getDate()}
-                </th>
-              ))}
+              {daysArray.map((date) => {
+                const isToday =
+                  date.getDate() === new Date().getDate() &&
+                  date.getMonth() === new Date().getMonth() &&
+                  date.getFullYear() === new Date().getFullYear();
+                return (
+                  <th
+                    key={date}
+                    className={`p-2 border text-center w-32 font-normal ${
+                      isToday ? "bg-yellow-300" : ""
+                    }`}
+                  >
+                    {dayNames[date.getDay()]} {date.getDate()}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
